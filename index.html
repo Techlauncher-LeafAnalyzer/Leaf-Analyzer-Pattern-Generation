@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Page</title>
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <div class="window">
+      <!-- Header -->
+      <div class="titlebar">
+        <h1>Pattern Designer</h1>
+        <div class="window-actions" aria-hidden="true">
+          <div class="action">−</div>
+          <div class="action">□</div>
+          <div class="action">×</div>
+        </div>
+      </div>
+      <!-- Body -->
+      <div class="content">
+        <!-- Left Input Area -->
+        <section class="left">
+          <div class="group">
+            <div class="fields">
+              <!-- Paper Size -->
+              <label class="field">
+                <span class="label">Paper size</span>
+                <span class="select-wrap">
+                  <select class="select">
+                    <option value="A4" selected>A4 (210 x 297 mm)</option>
+                    <option value="A3">A3 (297 x 420 mm)</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                </span>
+                <span></span>
+              </label>
+              <!-- Paper Width -->
+              <label class="field">
+                <span class="label">Paper width</span>
+                <input class="input" type="number" value="210" />
+              </label>
+              <!-- Paper Height -->
+              <label class="field">
+                <span class="label">Paper height</span>
+                <input class="input" type="number" value="297" />
+              </label>
+            </div>
+          </div>
+          <!-- Pattern -->
+          <div class="group">
+            <div class="fields">
+              <label class="field two-col">
+                <span class="label">Pattern width</span>
+                <input class="input" type="number" value="200" />
+              </label>
+              <label class="field two-col">
+                <span class="label">Pattern height</span>
+                <input class="input" type="number" value="227" />
+              </label>
+              <label class="field two-col">
+                <span class="label">AprilTag length</span>
+                <input class="input" type="number" value="15" />
+              </label>
+              <label class="field two-col">
+                <span class="label">Text height</span>
+                <input id="textHeight" class="input" type="number" value="30" />
+              </label>
+            </div>
+          </div>
+          <!-- Margins -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: auto 1fr;
+              gap: 12px;
+              align-items: center;
+            "
+          >
+            <div class="label" style="font-size: 16px; font-weight: 600">
+              Margins
+            </div>
+            <div class="group disabled margins-box">
+              <div>
+                Left: 5, Right: 5<br />
+                Top: 5, Bottom: 5
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Preview Area -->
+        <section class="preview-wrap">
+          <div class="paper">
+            <div class="sheet-meta">
+              <div class="brand">
+                <div class="name">Leaf Analyzer</div>
+                <div class="sub">APPN-Tech</div>
+              </div>
+            </div>
+            <div class="pattern-size">200×227-15 mm</div>
+            <div class="pattern">
+              <div class="tag tl"></div>
+              <div class="tag tr"></div>
+              <div class="tag bl"></div>
+              <div class="tag br"></div>
+            </div>
+          </div>
+          <div class="preview-label">Preview</div>
+        </section>
+      </div>
+      <!-- Two Buttons Area -->
+      <div class="actions">
+        <button class="btn cancel" type="button">
+          <span class="icon">✖</span><span>Cancel</span>
+        </button>
+        <button class="btn ok" type="button">
+          <span class="icon">✔</span><span>OK</span>
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
