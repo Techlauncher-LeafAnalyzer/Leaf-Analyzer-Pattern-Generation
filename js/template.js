@@ -17,4 +17,22 @@ function setRootVariables({ PW, PH, PTW, PTH, al, TH }) {
   root.style.setProperty("--th", `${TH}mm`);
 }
 
+function buildQRText({ PTW, PTH, al }) {
+  return `${PTW}*${PTH}-${al} mm`;
+}
+
+function renderQRCode({ PTW, PTH, al }) {
+  const canvas = document.getElementById("qrCanvas");
+  const qrTextEl = document.getElementById("qrText");
+  const text = buildQRText({ PTW, PTH, al });
+
+  qrTextEl.textContent = text;
+
+  QRCode.toCanvas(canvas, text, {
+    margin: 1,
+    width: Math.round(al * 3.7795275591 * 0.8),
+  });
+}
+
 setRootVariables(params);
+renderQRCode(params);
