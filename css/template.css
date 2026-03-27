@@ -31,21 +31,12 @@ body {
   overflow: hidden;
 }
 
-.pattern {
-  position: absolute;
-  width: var(--ptw);
-  height: var(--pth);
-  left: calc((var(--pw) - var(--ptw)) / 2);
-  top: calc(var(--al) + var(--th));
-  border: 2px dashed #222;
-}
-
 .text-area {
   position: absolute;
   width: var(--ptw);
   height: var(--th);
   left: calc((var(--pw) - var(--ptw)) / 2);
-  top: var(--al);
+  top: calc((var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al));
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -60,6 +51,16 @@ body {
   align-items: flex-start;
   justify-content: center;
   gap: 0;
+}
+
+.pattern {
+  position: absolute;
+  width: var(--ptw);
+  height: var(--pth);
+  left: calc((var(--pw) - var(--ptw)) / 2);
+  top: calc(
+    (var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al) + var(--th)
+  );
 }
 
 .title-block {
@@ -111,36 +112,71 @@ body {
   position: absolute;
   width: var(--al);
   height: var(--al);
-  background: #000;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  /* padding: 8%; */
 }
 
-.tag span {
-  background: transparent;
+.tag svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .tag.tl {
   left: 0;
   top: 0;
 }
+
 .tag.tr {
   right: 0;
   top: 0;
 }
+
 .tag.bl {
   left: 0;
   bottom: 0;
 }
+
 .tag.br {
   right: 0;
   bottom: 0;
 }
 
-.tag span.on {
-  background: #fff;
+.line {
+  position: absolute;
+  z-index: 0;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* horizontal tag space = pattern width - 2 * tag size */
+/* dashed line length = 0.9 * horizontal tag space */
+.top-line {
+  top: 0;
+  left: calc(var(--al) + (var(--ptw) - 2 * var(--al)) * 0.05);
+  width: calc((var(--ptw) - 2 * var(--al)) * 0.9);
+  border-top: 1px dashed #666;
+}
+
+.bottom-line {
+  bottom: 0;
+  left: calc(var(--al) + (var(--ptw) - 2 * var(--al)) * 0.05);
+  width: calc((var(--ptw) - 2 * var(--al)) * 0.9);
+  border-top: 1px dashed #666;
+}
+
+/* vertical tag space = pattern height - 2 * tag size */
+/* dashed line length = 0.9 * vertical tag space */
+.left-line {
+  left: 0;
+  top: calc(var(--al) + (var(--pth) - 2 * var(--al)) * 0.05);
+  height: calc((var(--pth) - 2 * var(--al)) * 0.9);
+  border-left: 1px dashed #666;
+}
+
+.right-line {
+  right: 0;
+  top: calc(var(--al) + (var(--pth) - 2 * var(--al)) * 0.05);
+  height: calc((var(--pth) - 2 * var(--al)) * 0.9);
+  border-left: 1px dashed #666;
 }
 
 .info {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Page</title>
-    <link rel="stylesheet" href="../css/index.css" />
+    <link rel="stylesheet" href="./css/index.css" />
   </head>
   <body>
     <div class="window">
@@ -113,10 +113,15 @@
         <button class="btn cancel" type="button">
           <span class="icon">✖</span><span>Cancel</span>
         </button>
-        <button class="btn ok" type="button">
+        <button class="btn ok" id="okBtn" type="button">
           <span class="icon">✔</span><span>OK</span>
         </button>
       </div>
     </div>
+    <script>
+      document.getElementById("okBtn").addEventListener("click", () => {
+        window.location.href = "./src/template.html";
+      });
+    </script>
   </body>
 </html>
