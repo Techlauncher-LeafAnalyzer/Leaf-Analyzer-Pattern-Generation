@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RealTime QRCode Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+
+  <h2>RealTime QRCode Generator</h2>
+
+  <div>
+    <label for="length">Pattern width: </label>
+    <input type="number" id="length" value="110">
+  </div>
+
+  <div>
+    <label for="width">Pattern height: </label>
+    <input type="number" id="width" value="100">
+  </div>
+
+  <div>
+    <label for="tagWidth">AprilTag length: </label>
+    <input type="number" id="tagWidth" value="20">
+  </div>
+
+  <div>
+    <label for="unit">unit: </label>
+    <input type="text" id="unit" value="mm">
+  </div>
+
+  <div id="qrcode"></div>
+
+  <div id="encodedText"></div>
+
+  <script>
+    const lengthInput = document.getElementById("length");
+    const widthInput = document.getElementById("width");
+    const tagWidthInput = document.getElementById("tagWidth");
+    const unitInput = document.getElementById("unit");
+
+    function buildText() {
+      const length = lengthInput.value || "";
+      const width = widthInput.value || "";
+      const tagWidth = tagWidthInput.value || "";
+      const unit = unitInput.value.trim() || "mm";
+
+	  return `${length}*${width}-${tagWidth} ${unit}`;
+    }
+
+    function updateQRCode() {
+      const text = buildText();
+      const qrcodeDiv = document.getElementById("qrcode");
+      const encodedText = document.getElementById("encodedText");
+
+      qrcodeDiv.innerHTML = "";
+
+      QRCode.toCanvas(text, { width: 256, margin: 2 }, function (err, canvas) {
+        if (err) {
+          encodedText.textContent = "QRCode Generate failed";
+          return;
+        }
+        qrcodeDiv.appendChild(canvas);
+        encodedText.textContent = "QRCode content: " + text;
+      });
+    }
+
+    lengthInput.addEventListener("input", updateQRCode);
+    widthInput.addEventListener("input", updateQRCode);
+    tagWidthInput.addEventListener("input", updateQRCode);
+    unitInput.addEventListener("input", updateQRCode);
+
+    updateQRCode();
+  </script>
+
+</body>
+</html>
