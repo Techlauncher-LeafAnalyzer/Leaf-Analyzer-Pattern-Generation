@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AprilTag Layout</title>
+    <title>Template Layout</title>
     <link rel="stylesheet" href="../css/template.css" />
   </head>
   <body>
@@ -14,16 +14,11 @@
             <div class="title-main">Leaf Analyzer</div>
             <div class="title-sub">APPN-Tech</div>
           </div>
-          <img
-            class="logo"
-            src="https://via.placeholder.com/240x240.png?text=Logo"
-            alt="Logo"
-          />
-          <img
-            class="qr"
-            src="https://via.placeholder.com/240x240.png?text=QR"
-            alt="QR Code"
-          />
+          <img class="logo" src="../assets/logo.svg" alt="Logo" />
+          <div class="qr-block">
+            <canvas class="qr" id="qrCanvas"></canvas>
+            <div class="qr-text" id="qrText"></div>
+          </div>
         </div>
       </div>
 
@@ -106,6 +101,7 @@
         <div class="line right-line"></div>
       </div>
     </div>
+    <script src="../js/qrcode.min.js"></script>
     <script src="../js/template.js"></script>
   </body>
 </html>
