@@ -82,6 +82,13 @@ function applyTemplateParams(nextParams) {
 }
 
 /**
+ * Wraps window.print().
+ */
+function saveAsPDF(){
+  window.print();
+}
+
+/**
  * Listen for messages from parent window.
  * Used to update template dynamically.
  */
@@ -90,12 +97,12 @@ window.addEventListener("message", (event) => {
   if (window.location.protocol !== "file:" && event.origin !== window.location.origin) {
     return;
   }
-  if (event.data?.type !== "template-params") return;
 
-  applyTemplateParams({
-    ...defaultParams,
-    ...event.data.params,
-  });
+  if (event.data?.type === "template-params") {
+    applyTemplateParams({ ...defaultParams, ...event.data.params });
+  } else if (event.data?.type === "save-pdf") {
+    saveAsPDF();
+  }
 });
 
 // Apply parameters from URL on first load
