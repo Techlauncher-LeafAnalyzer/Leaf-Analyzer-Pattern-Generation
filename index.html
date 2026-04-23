@@ -106,9 +106,9 @@
               Margins
             </div>
             <div class="group disabled margins-box">
-              <div>
-                Left: 5, Right: 5<br />
-                Top: 5, Bottom: 5
+              <div id="marginsText">
+                Left: 20 mm, Right: 20 mm<br />
+                Top: 12.5 mm, Bottom: 12.5 mm
               </div>
             </div>
           </div>
@@ -166,6 +166,7 @@
         previewFrame: document.querySelector(".preview-iframe"),
         previewViewport: document.querySelector(".preview-viewport"),
         paper: document.querySelector(".paper"),
+        marginsText: document.getElementById("marginsText"),
         resetBtn: document.getElementById("resetBtn"),
         okBtn: document.getElementById("okBtn"),
       };
@@ -212,6 +213,24 @@
         return `./src/template.html?${searchParams.toString()}`;
       }
 
+      function formatMm(value) {
+        return Number.isInteger(value)
+          ? String(value)
+          : Number(value.toFixed(3)).toString();
+      }
+
+      function updateMarginsDisplay({ PW, PH, PTW, PTH, al, TH }) {
+        const horizontalMargin = (PW - PTW) / 2;
+        const topMargin = (PH - al - TH - PTH) / 2;
+        const bottomMargin = PH - topMargin - al - TH - PTH;
+
+        elements.marginsText.innerHTML =
+          `Left: ${formatMm(horizontalMargin)} mm, ` +
+          `Right: ${formatMm(horizontalMargin)} mm<br />` +
+          `Top: ${formatMm(topMargin)} mm, ` +
+          `Bottom: ${formatMm(bottomMargin)} mm`;
+      }
+
       function syncPaperPreset() {
         const { paperSize, paperWidth, paperHeight } = elements;
         const preset = PRESET_SIZES[paperSize.value];
@@ -254,6 +273,7 @@
         const targetOrigin =
           window.location.protocol === "file:" ? "*" : window.location.origin;
 
+        updateMarginsDisplay(params);
         updatePreviewScale();
 
         if (elements.previewFrame.contentWindow) {
