@@ -25,7 +25,7 @@ body {
   display: grid;
   place-items: center;
   font-family: "Microsoft YaHei", sans-serif;
-  background: linear-gradient(135deg, #fbcc5d 0%, #ffffff 50%, #cbdc7e 100%);
+  background: linear-gradient(135deg, #ffd167 0%, #fffafa 50%, #c9d982 100%);
   color: var(--text);
   padding: 24px;
 }
@@ -334,7 +334,7 @@ body {
   min-height: 102px;
   display: flex;
   align-items: center;
-  color: #8c94a3;
+  color: #2d2d2d;
   line-height: 1.7;
   font-size: 14px;
 }
@@ -355,7 +355,7 @@ body {
   color: var(--danger);
 }
 .btn.cancel {
-  background: linear-gradient(180deg, #fcfffb 0%, #f5dfdf 100%);
+  background: linear-gradient(180deg, #fffbfb 0%, #ffebeb 100%);
 }
 .btn.ok {
   border-color: #93b887;
