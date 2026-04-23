@@ -1,4 +1,7 @@
+// Conversion constant: millimeters to pixels (based on 96 DPI)
 const MM_TO_PX = 96 / 25.4;
+
+// Default template parameters (all units in mm)
 const DEFAULT_TEMPLATE_PARAMS = {
   PW: 210,
   PH: 297,
@@ -8,11 +11,13 @@ const DEFAULT_TEMPLATE_PARAMS = {
   TH: 28,
 };
 
+// Preset paper sizes
 const PRESET_SIZES = {
   A4: { PW: 210, PH: 297 },
   A3: { PW: 297, PH: 420 },
 };
 
+// Cache all DOM elements for easy access
 const elements = {
   paperSize: document.getElementById("paperSize"),
   paperWidth: document.getElementById("paperWidth"),
@@ -29,11 +34,18 @@ const elements = {
   okBtn: document.getElementById("okBtn"),
 };
 
+/**
+ * Safely parse numeric input from an input element.
+ * Falls back to default value if invalid.
+ */
 function getNumericValue(element, fallback) {
   const value = Number.parseFloat(element.value);
   return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
+/**
+ * Read all current parameters from input fields.
+ */
 function getCurrentParams() {
   return {
     PW: getNumericValue(elements.paperWidth, DEFAULT_TEMPLATE_PARAMS.PW),
@@ -45,6 +57,9 @@ function getCurrentParams() {
   };
 }
 
+/**
+ * Apply parameter values back into input fields.
+ */
 function applyParamsToInputs(params) {
   elements.paperWidth.value = params.PW;
   elements.paperHeight.value = params.PH;
@@ -54,6 +69,9 @@ function applyParamsToInputs(params) {
   elements.textHeight.value = params.TH;
 }
 
+/**
+ * Build preview page URL with query parameters.
+ */
 function buildTemplateUrl(params) {
   const searchParams = new URLSearchParams(
     Object.entries(params).map(([key, value]) => [key, String(value)]),
@@ -62,12 +80,18 @@ function buildTemplateUrl(params) {
   return `./src/template.html?${searchParams.toString()}`;
 }
 
+/**
+ * Format millimeter values for display.
+ */
 function formatMm(value) {
   return Number.isInteger(value)
     ? String(value)
     : Number(value.toFixed(3)).toString();
 }
 
+/**
+ * Calculate and display page margins.
+ */
 function updateMarginsDisplay({ PW, PH, PTW, PTH, al, TH }) {
   const horizontalMargin = (PW - PTW) / 2;
   const topMargin = (PH - al - TH - PTH) / 2;
@@ -80,6 +104,9 @@ function updateMarginsDisplay({ PW, PH, PTW, PTH, al, TH }) {
     `Bottom: ${formatMm(bottomMargin)} mm`;
 }
 
+/**
+ * Sync width/height when preset (A4/A3) is selected.
+ */
 function syncPaperPreset() {
   const { paperSize, paperWidth, paperHeight } = elements;
   const preset = PRESET_SIZES[paperSize.value];
@@ -90,6 +117,9 @@ function syncPaperPreset() {
   paperHeight.value = preset.PH;
 }
 
+/**
+ * Update dropdown selection based on manual input.
+ */
 function syncPaperSizeSelect() {
   const { PW, PH } = getCurrentParams();
   const activePreset = Object.entries(PRESET_SIZES).find(
@@ -99,6 +129,9 @@ function syncPaperSizeSelect() {
   elements.paperSize.value = activePreset ? activePreset[0] : "Custom";
 }
 
+/**
+ * Scale preview to fit viewport.
+ */
 function updatePreviewScale() {
   const { previewViewport, paper } = elements;
   const { PW, PH } = getCurrentParams();
@@ -117,6 +150,9 @@ function updatePreviewScale() {
   paper.style.setProperty("--preview-scale", String(scale));
 }
 
+/**
+ * Send updated parameters to preview iframe.
+ */
 function pushParamsToPreview() {
   const params = getCurrentParams();
   const targetOrigin =
@@ -133,22 +169,34 @@ function pushParamsToPreview() {
   }
 }
 
+/**
+ * Handle any input field change.
+ */
 function handleFieldChange() {
   syncPaperSizeSelect();
   pushParamsToPreview();
 }
 
+/**
+ * Reset all parameters to default values.
+ */
 function resetToDefaultParams() {
   applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
   syncPaperSizeSelect();
   pushParamsToPreview();
 }
 
+/* ===========================
+   Event Listeners
+=========================== */
+
+// Paper size dropdown
 elements.paperSize.addEventListener("change", () => {
   syncPaperPreset();
   handleFieldChange();
 });
 
+// Six numeric input fields
 [
   elements.paperWidth,
   elements.paperHeight,
@@ -161,6 +209,7 @@ elements.paperSize.addEventListener("change", () => {
   input.addEventListener("change", handleFieldChange);
 });
 
+// Window events
 window.addEventListener("resize", pushParamsToPreview);
 window.addEventListener("load", () => {
   applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
@@ -169,9 +218,11 @@ window.addEventListener("load", () => {
   pushParamsToPreview();
 });
 
+// Iframe load
 elements.previewFrame.addEventListener("load", pushParamsToPreview);
-elements.resetBtn.addEventListener("click", resetToDefaultParams);
 
+// Buttons
+elements.resetBtn.addEventListener("click", resetToDefaultParams);
 elements.okBtn.addEventListener("click", () => {
   window.location.href = buildTemplateUrl(getCurrentParams());
 });

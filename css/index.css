@@ -213,6 +213,7 @@ body {
 .preview-stage {
   position: relative;
   flex: 0 0 auto;
+  /* Final preview width = real page width × current scale */
   width: calc(var(--preview-page-width, 210mm) * var(--preview-scale));
   height: calc(var(--preview-page-height, 297mm) * var(--preview-scale));
 }
@@ -280,47 +281,6 @@ body {
     rgba(247, 248, 251, 0.3),
     rgba(255, 255, 255, 0.1)
   );
-}
-
-/* Corner Tag */
-.tag {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background:
-    conic-gradient(#000 0 25%, #fff 0 50%, #000 0 75%, #fff 0),
-    repeating-conic-gradient(#000 0 12.5%, #fff 0 25%);
-  background-size:
-    10px 10px,
-    6px 6px;
-  background-position: center;
-  border: 2px solid #111;
-  box-shadow: 0 0 0 2px #fff inset;
-}
-
-.tag::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border: 2px solid #111;
-  background: #fff;
-}
-
-.tag.tl {
-  left: 6px;
-  top: 6px;
-}
-.tag.tr {
-  right: 6px;
-  top: 6px;
-}
-.tag.bl {
-  left: 6px;
-  bottom: 6px;
-}
-.tag.br {
-  right: 6px;
-  bottom: 6px;
 }
 
 .preview-label {
