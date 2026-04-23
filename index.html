@@ -3,31 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Demo Page</title>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="./css/lggc.min.css" />
     <link rel="stylesheet" href="./css/index.css" />
   </head>
   <body>
-    <div class="window">
+    <div class="window lggc">
       <!-- Header -->
-      <div class="titlebar">
+      <div class="titlebar lggc">
         <h1>Pattern Designer</h1>
-        <div class="window-actions" aria-hidden="true">
-          <div class="action">−</div>
-          <div class="action">□</div>
-          <div class="action">×</div>
-        </div>
       </div>
       <!-- Body -->
       <div class="content">
         <!-- Left Input Area -->
         <section class="left">
-          <div class="group">
+          <div class="group lggc" style="--lggc-blur: 10px">
             <div class="fields">
               <!-- Paper Size -->
               <label class="field">
                 <span class="label">Paper size</span>
                 <span class="select-wrap">
-                  <select class="select">
+                  <select class="select" id="paperSize">
                     <option value="A4" selected>A4 (210 x 297 mm)</option>
                     <option value="A3">A3 (297 x 420 mm)</option>
                     <option value="Custom">Custom</option>
@@ -38,33 +34,62 @@
               <!-- Paper Width -->
               <label class="field">
                 <span class="label">Paper width</span>
-                <input class="input" type="number" value="210" />
+                <input class="lggc" id="paperWidth" type="number" value="210" />
               </label>
               <!-- Paper Height -->
               <label class="field">
                 <span class="label">Paper height</span>
-                <input class="input" type="number" value="297" />
+                <input
+                  class="lggc"
+                  id="paperHeight"
+                  type="number"
+                  value="297"
+                />
               </label>
             </div>
           </div>
           <!-- Pattern -->
-          <div class="group">
+          <div class="group lggc" style="--lggc-blur: 10px">
             <div class="fields">
               <label class="field two-col">
                 <span class="label">Pattern width</span>
-                <input class="input" type="number" value="200" />
+                <input
+                  id="patternWidth"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="170"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">Pattern height</span>
-                <input class="input" type="number" value="227" />
+                <input
+                  id="patternHeight"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.48)"
+                  type="number"
+                  value="220"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">AprilTag length</span>
-                <input class="input" type="number" value="15" />
+                <input
+                  id="aprilTagLength"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="24"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">Text height</span>
-                <input id="textHeight" class="input" type="number" value="30" />
+                <input
+                  id="textHeight"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="28"
+                />
               </label>
             </div>
           </div>
@@ -77,13 +102,13 @@
               align-items: center;
             "
           >
-            <div class="label" style="font-size: 16px; font-weight: 600">
+            <div class="label lggc" style="font-size: 16px; font-weight: 600">
               Margins
             </div>
             <div class="group disabled margins-box">
-              <div>
-                Left: 5, Right: 5<br />
-                Top: 5, Bottom: 5
+              <div id="marginsText">
+                Left: 20 mm, Right: 20 mm<br />
+                Top: 12.5 mm, Bottom: 12.5 mm
               </div>
             </div>
           </div>
@@ -91,37 +116,29 @@
         <!-- Preview Area -->
         <section class="preview-wrap">
           <div class="paper">
-            <div class="sheet-meta">
-              <div class="brand">
-                <div class="name">Leaf Analyzer</div>
-                <div class="sub">APPN-Tech</div>
+            <div class="preview-viewport">
+              <div class="preview-stage">
+                <iframe
+                  src="./src/template.html"
+                  class="preview-iframe"
+                  frameborder="0"
+                ></iframe>
               </div>
             </div>
-            <div class="pattern-size">200×227-15 mm</div>
-            <div class="pattern">
-              <div class="tag tl"></div>
-              <div class="tag tr"></div>
-              <div class="tag bl"></div>
-              <div class="tag br"></div>
-            </div>
           </div>
-          <div class="preview-label">Preview</div>
+          <div class="preview-label lggc">Preview</div>
         </section>
       </div>
       <!-- Two Buttons Area -->
       <div class="actions">
-        <button class="btn cancel" type="button">
-          <span class="icon">✖</span><span>Cancel</span>
+        <button class="btn cancel lggc" id="resetBtn" type="button">
+          <span class="icon">✖</span><span>Reset</span>
         </button>
-        <button class="btn ok" id="okBtn" type="button">
-          <span class="icon">✔</span><span>OK</span>
+        <button class="btn ok lggc" id="okBtn" type="button">
+          <span class="icon">✔</span><span>Print</span>
         </button>
       </div>
     </div>
-    <script>
-      document.getElementById("okBtn").addEventListener("click", () => {
-        window.location.href = "./src/template.html";
-      });
-    </script>
+    <script src="./js/index.js"></script>
   </body>
 </html>

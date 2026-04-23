@@ -35,7 +35,10 @@ body {
   position: absolute;
   width: var(--ptw);
   height: var(--th);
+  /* Center the text area horizontally on the page */
   left: calc((var(--pw) - var(--ptw)) / 2);
+  /* First find the top margin of the whole content block,
+     then move down by one tag height */
   top: calc((var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al));
   display: flex;
   align-items: flex-start;
@@ -44,6 +47,7 @@ body {
 
 .header-content {
   position: absolute;
+  /* Move the header upward by one tag height */
   top: calc(-1 * var(--al));
   left: 50%;
   transform: translateX(-50%);
@@ -57,7 +61,10 @@ body {
   position: absolute;
   width: var(--ptw);
   height: var(--pth);
+  /* Center the pattern horizontally on the page */
   left: calc((var(--pw) - var(--ptw)) / 2);
+   /* Start from the top margin of the full block,
+     then add tag height and text height */
   top: calc(
     (var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al) + var(--th)
   );
@@ -73,19 +80,21 @@ body {
 }
 
 .title-main {
+  /* Main title height = 30% of tag size */
   height: calc(0.3 * var(--al));
   line-height: calc(0.3 * var(--al));
   font-size: calc(0.18 * var(--al));
   font-weight: 700;
-  color: #d4a106;
+  color: #fbc43b;
 }
 
 .title-sub {
+  /* Subtitle height = 20% of tag size */
   height: calc(0.2 * var(--al));
   line-height: calc(0.2 * var(--al));
   font-size: calc(0.12 * var(--al));
   font-weight: 700;
-  color: #6aa84f;
+  color: #a5cb71;
 }
 
 .logo {
@@ -108,12 +117,14 @@ body {
 
 .qr {
   display: block;
+  /* QR code size = 80% of tag size */
   width: calc(0.8 * var(--al));
   height: calc(0.8 * var(--al));
   border: 0;
 }
 
 .qr-text {
+  /* QR text area height = 20% of tag size */
   height: calc(0.2 * var(--al));
   line-height: calc(0.2 * var(--al));
   font-size: calc(0.15 * var(--al));

@@ -1,0 +1,228 @@
+// Conversion constant: millimeters to pixels (based on 96 DPI)
+const MM_TO_PX = 96 / 25.4;
+
+// Default template parameters (all units in mm)
+const DEFAULT_TEMPLATE_PARAMS = {
+  PW: 210,
+  PH: 297,
+  PTW: 170,
+  PTH: 220,
+  al: 24,
+  TH: 28,
+};
+
+// Preset paper sizes
+const PRESET_SIZES = {
+  A4: { PW: 210, PH: 297 },
+  A3: { PW: 297, PH: 420 },
+};
+
+// Cache all DOM elements for easy access
+const elements = {
+  paperSize: document.getElementById("paperSize"),
+  paperWidth: document.getElementById("paperWidth"),
+  paperHeight: document.getElementById("paperHeight"),
+  patternWidth: document.getElementById("patternWidth"),
+  patternHeight: document.getElementById("patternHeight"),
+  aprilTagLength: document.getElementById("aprilTagLength"),
+  textHeight: document.getElementById("textHeight"),
+  previewFrame: document.querySelector(".preview-iframe"),
+  previewViewport: document.querySelector(".preview-viewport"),
+  paper: document.querySelector(".paper"),
+  marginsText: document.getElementById("marginsText"),
+  resetBtn: document.getElementById("resetBtn"),
+  okBtn: document.getElementById("okBtn"),
+};
+
+/**
+ * Safely parse numeric input from an input element.
+ * Falls back to default value if invalid.
+ */
+function getNumericValue(element, fallback) {
+  const value = Number.parseFloat(element.value);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+/**
+ * Read all current parameters from input fields.
+ */
+function getCurrentParams() {
+  return {
+    PW: getNumericValue(elements.paperWidth, DEFAULT_TEMPLATE_PARAMS.PW),
+    PH: getNumericValue(elements.paperHeight, DEFAULT_TEMPLATE_PARAMS.PH),
+    PTW: getNumericValue(elements.patternWidth, DEFAULT_TEMPLATE_PARAMS.PTW),
+    PTH: getNumericValue(elements.patternHeight, DEFAULT_TEMPLATE_PARAMS.PTH),
+    al: getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al),
+    TH: getNumericValue(elements.textHeight, DEFAULT_TEMPLATE_PARAMS.TH),
+  };
+}
+
+/**
+ * Apply parameter values back into input fields.
+ */
+function applyParamsToInputs(params) {
+  elements.paperWidth.value = params.PW;
+  elements.paperHeight.value = params.PH;
+  elements.patternWidth.value = params.PTW;
+  elements.patternHeight.value = params.PTH;
+  elements.aprilTagLength.value = params.al;
+  elements.textHeight.value = params.TH;
+}
+
+/**
+ * Build preview page URL with query parameters.
+ */
+function buildTemplateUrl(params) {
+  const searchParams = new URLSearchParams(
+    Object.entries(params).map(([key, value]) => [key, String(value)]),
+  );
+
+  return `./src/template.html?${searchParams.toString()}`;
+}
+
+/**
+ * Format millimeter values for display.
+ */
+function formatMm(value) {
+  return Number.isInteger(value)
+    ? String(value)
+    : Number(value.toFixed(3)).toString();
+}
+
+/**
+ * Calculate and display page margins.
+ */
+function updateMarginsDisplay({ PW, PH, PTW, PTH, al, TH }) {
+  const horizontalMargin = (PW - PTW) / 2;
+  const topMargin = (PH - al - TH - PTH) / 2;
+  const bottomMargin = PH - topMargin - al - TH - PTH;
+
+  elements.marginsText.innerHTML =
+    `Left: ${formatMm(horizontalMargin)} mm, ` +
+    `Right: ${formatMm(horizontalMargin)} mm<br />` +
+    `Top: ${formatMm(topMargin)} mm, ` +
+    `Bottom: ${formatMm(bottomMargin)} mm`;
+}
+
+/**
+ * Sync width/height when preset (A4/A3) is selected.
+ */
+function syncPaperPreset() {
+  const { paperSize, paperWidth, paperHeight } = elements;
+  const preset = PRESET_SIZES[paperSize.value];
+
+  if (!preset) return;
+
+  paperWidth.value = preset.PW;
+  paperHeight.value = preset.PH;
+}
+
+/**
+ * Update dropdown selection based on manual input.
+ */
+function syncPaperSizeSelect() {
+  const { PW, PH } = getCurrentParams();
+  const activePreset = Object.entries(PRESET_SIZES).find(
+    ([, preset]) => preset.PW === PW && preset.PH === PH,
+  );
+
+  elements.paperSize.value = activePreset ? activePreset[0] : "Custom";
+}
+
+/**
+ * Scale preview to fit viewport.
+ */
+function updatePreviewScale() {
+  const { previewViewport, paper } = elements;
+  const { PW, PH } = getCurrentParams();
+
+  if (!previewViewport || !paper) return;
+
+  const pageWidthPx = PW * MM_TO_PX;
+  const pageHeightPx = PH * MM_TO_PX;
+  const scale = Math.min(
+    previewViewport.clientWidth / pageWidthPx,
+    previewViewport.clientHeight / pageHeightPx,
+  );
+
+  paper.style.setProperty("--preview-page-width", `${PW}mm`);
+  paper.style.setProperty("--preview-page-height", `${PH}mm`);
+  paper.style.setProperty("--preview-scale", String(scale));
+}
+
+/**
+ * Send updated parameters to preview iframe.
+ */
+function pushParamsToPreview() {
+  const params = getCurrentParams();
+  const targetOrigin =
+    window.location.protocol === "file:" ? "*" : window.location.origin;
+
+  updateMarginsDisplay(params);
+  updatePreviewScale();
+
+  if (elements.previewFrame.contentWindow) {
+    elements.previewFrame.contentWindow.postMessage(
+      { type: "template-params", params },
+      targetOrigin,
+    );
+  }
+}
+
+/**
+ * Handle any input field change.
+ */
+function handleFieldChange() {
+  syncPaperSizeSelect();
+  pushParamsToPreview();
+}
+
+/**
+ * Reset all parameters to default values.
+ */
+function resetToDefaultParams() {
+  applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
+  syncPaperSizeSelect();
+  pushParamsToPreview();
+}
+
+/* ===========================
+   Event Listeners
+=========================== */
+
+// Paper size dropdown
+elements.paperSize.addEventListener("change", () => {
+  syncPaperPreset();
+  handleFieldChange();
+});
+
+// Six numeric input fields
+[
+  elements.paperWidth,
+  elements.paperHeight,
+  elements.patternWidth,
+  elements.patternHeight,
+  elements.aprilTagLength,
+  elements.textHeight,
+].forEach((input) => {
+  input.addEventListener("input", handleFieldChange);
+  input.addEventListener("change", handleFieldChange);
+});
+
+// Window events
+window.addEventListener("resize", pushParamsToPreview);
+window.addEventListener("load", () => {
+  applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
+  syncPaperSizeSelect();
+  elements.previewFrame.src = buildTemplateUrl(DEFAULT_TEMPLATE_PARAMS);
+  pushParamsToPreview();
+});
+
+// Iframe load
+elements.previewFrame.addEventListener("load", pushParamsToPreview);
+
+// Buttons
+elements.resetBtn.addEventListener("click", resetToDefaultParams);
+elements.okBtn.addEventListener("click", () => {
+  window.location.href = buildTemplateUrl(getCurrentParams());
+});
