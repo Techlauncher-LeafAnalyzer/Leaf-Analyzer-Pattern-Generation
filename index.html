@@ -4,30 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demo Page</title>
+    <link rel="stylesheet" href="./css/lggc.min.css" />
     <link rel="stylesheet" href="./css/index.css" />
   </head>
   <body>
-    <div class="window">
+    <div class="window lggc">
       <!-- Header -->
-      <div class="titlebar">
+      <div class="titlebar lggc">
         <h1>Pattern Designer</h1>
-        <div class="window-actions" aria-hidden="true">
-          <div class="action">−</div>
-          <div class="action">□</div>
-          <div class="action">×</div>
-        </div>
       </div>
       <!-- Body -->
       <div class="content">
         <!-- Left Input Area -->
         <section class="left">
-          <div class="group">
+          <div class="group lggc" style="--lggc-blur: 10px">
             <div class="fields">
               <!-- Paper Size -->
               <label class="field">
                 <span class="label">Paper size</span>
                 <span class="select-wrap">
-                  <select class="select">
+                  <select class="select" id="paperSize">
                     <option value="A4" selected>A4 (210 x 297 mm)</option>
                     <option value="A3">A3 (297 x 420 mm)</option>
                     <option value="Custom">Custom</option>
@@ -38,33 +34,62 @@
               <!-- Paper Width -->
               <label class="field">
                 <span class="label">Paper width</span>
-                <input class="input" type="number" value="210" />
+                <input class="lggc" id="paperWidth" type="number" value="210" />
               </label>
               <!-- Paper Height -->
               <label class="field">
                 <span class="label">Paper height</span>
-                <input class="input" type="number" value="297" />
+                <input
+                  class="lggc"
+                  id="paperHeight"
+                  type="number"
+                  value="297"
+                />
               </label>
             </div>
           </div>
           <!-- Pattern -->
-          <div class="group">
+          <div class="group lggc" style="--lggc-blur: 10px">
             <div class="fields">
               <label class="field two-col">
                 <span class="label">Pattern width</span>
-                <input class="input" type="number" value="200" />
+                <input
+                  id="patternWidth"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="170"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">Pattern height</span>
-                <input class="input" type="number" value="227" />
+                <input
+                  id="patternHeight"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.48)"
+                  type="number"
+                  value="220"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">AprilTag length</span>
-                <input class="input" type="number" value="15" />
+                <input
+                  id="aprilTagLength"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="24"
+                />
               </label>
               <label class="field two-col">
                 <span class="label">Text height</span>
-                <input id="textHeight" class="input" type="number" value="30" />
+                <input
+                  id="textHeight"
+                  class="lggc"
+                  style="--lggc-bg: rgba(255, 255, 255, 0.28)"
+                  type="number"
+                  value="28"
+                />
               </label>
             </div>
           </div>
@@ -77,7 +102,7 @@
               align-items: center;
             "
           >
-            <div class="label" style="font-size: 16px; font-weight: 600">
+            <div class="label lggc" style="font-size: 16px; font-weight: 600">
               Margins
             </div>
             <div class="group disabled margins-box">
@@ -91,36 +116,195 @@
         <!-- Preview Area -->
         <section class="preview-wrap">
           <div class="paper">
-            <div class="sheet-meta">
-              <div class="brand">
-                <div class="name">Leaf Analyzer</div>
-                <div class="sub">APPN-Tech</div>
+            <div class="preview-viewport">
+              <div class="preview-stage">
+                <iframe
+                  src="./src/template.html"
+                  class="preview-iframe"
+                  frameborder="0"
+                ></iframe>
               </div>
             </div>
-            <div class="pattern-size">200×227-15 mm</div>
-            <div class="pattern">
-              <div class="tag tl"></div>
-              <div class="tag tr"></div>
-              <div class="tag bl"></div>
-              <div class="tag br"></div>
-            </div>
           </div>
-          <div class="preview-label">Preview</div>
+          <div class="preview-label lggc">Preview</div>
         </section>
       </div>
       <!-- Two Buttons Area -->
       <div class="actions">
-        <button class="btn cancel" type="button">
-          <span class="icon">✖</span><span>Cancel</span>
+        <button class="btn cancel lggc" id="resetBtn" type="button">
+          <span class="icon">✖</span><span>Reset</span>
         </button>
-        <button class="btn ok" id="okBtn" type="button">
-          <span class="icon">✔</span><span>OK</span>
+        <button class="btn ok lggc" id="okBtn" type="button">
+          <span class="icon">✔</span><span>Print</span>
         </button>
       </div>
     </div>
     <script>
-      document.getElementById("okBtn").addEventListener("click", () => {
-        window.location.href = "./src/template.html";
+      const MM_TO_PX = 96 / 25.4;
+      const DEFAULT_TEMPLATE_PARAMS = {
+        PW: 210,
+        PH: 297,
+        PTW: 170,
+        PTH: 220,
+        al: 24,
+        TH: 28,
+      };
+
+      const PRESET_SIZES = {
+        A4: { PW: 210, PH: 297 },
+        A3: { PW: 297, PH: 420 },
+      };
+
+      const elements = {
+        paperSize: document.getElementById("paperSize"),
+        paperWidth: document.getElementById("paperWidth"),
+        paperHeight: document.getElementById("paperHeight"),
+        patternWidth: document.getElementById("patternWidth"),
+        patternHeight: document.getElementById("patternHeight"),
+        aprilTagLength: document.getElementById("aprilTagLength"),
+        textHeight: document.getElementById("textHeight"),
+        previewFrame: document.querySelector(".preview-iframe"),
+        previewViewport: document.querySelector(".preview-viewport"),
+        paper: document.querySelector(".paper"),
+        resetBtn: document.getElementById("resetBtn"),
+        okBtn: document.getElementById("okBtn"),
+      };
+
+      function getNumericValue(element, fallback) {
+        const value = Number.parseFloat(element.value);
+        return Number.isFinite(value) && value > 0 ? value : fallback;
+      }
+
+      function getCurrentParams() {
+        return {
+          PW: getNumericValue(elements.paperWidth, DEFAULT_TEMPLATE_PARAMS.PW),
+          PH: getNumericValue(elements.paperHeight, DEFAULT_TEMPLATE_PARAMS.PH),
+          PTW: getNumericValue(
+            elements.patternWidth,
+            DEFAULT_TEMPLATE_PARAMS.PTW,
+          ),
+          PTH: getNumericValue(
+            elements.patternHeight,
+            DEFAULT_TEMPLATE_PARAMS.PTH,
+          ),
+          al: getNumericValue(
+            elements.aprilTagLength,
+            DEFAULT_TEMPLATE_PARAMS.al,
+          ),
+          TH: getNumericValue(elements.textHeight, DEFAULT_TEMPLATE_PARAMS.TH),
+        };
+      }
+
+      function applyParamsToInputs(params) {
+        elements.paperWidth.value = params.PW;
+        elements.paperHeight.value = params.PH;
+        elements.patternWidth.value = params.PTW;
+        elements.patternHeight.value = params.PTH;
+        elements.aprilTagLength.value = params.al;
+        elements.textHeight.value = params.TH;
+      }
+
+      function buildTemplateUrl(params) {
+        const searchParams = new URLSearchParams(
+          Object.entries(params).map(([key, value]) => [key, String(value)]),
+        );
+
+        return `./src/template.html?${searchParams.toString()}`;
+      }
+
+      function syncPaperPreset() {
+        const { paperSize, paperWidth, paperHeight } = elements;
+        const preset = PRESET_SIZES[paperSize.value];
+
+        if (!preset) return;
+
+        paperWidth.value = preset.PW;
+        paperHeight.value = preset.PH;
+      }
+
+      function syncPaperSizeSelect() {
+        const { PW, PH } = getCurrentParams();
+        const activePreset = Object.entries(PRESET_SIZES).find(
+          ([, preset]) => preset.PW === PW && preset.PH === PH,
+        );
+
+        elements.paperSize.value = activePreset ? activePreset[0] : "Custom";
+      }
+
+      function updatePreviewScale() {
+        const { previewViewport, paper } = elements;
+        const { PW, PH } = getCurrentParams();
+
+        if (!previewViewport || !paper) return;
+
+        const pageWidthPx = PW * MM_TO_PX;
+        const pageHeightPx = PH * MM_TO_PX;
+        const scale = Math.min(
+          previewViewport.clientWidth / pageWidthPx,
+          previewViewport.clientHeight / pageHeightPx,
+        );
+
+        paper.style.setProperty("--preview-page-width", `${PW}mm`);
+        paper.style.setProperty("--preview-page-height", `${PH}mm`);
+        paper.style.setProperty("--preview-scale", String(scale));
+      }
+
+      function pushParamsToPreview() {
+        const params = getCurrentParams();
+        const targetOrigin =
+          window.location.protocol === "file:" ? "*" : window.location.origin;
+
+        updatePreviewScale();
+
+        if (elements.previewFrame.contentWindow) {
+          elements.previewFrame.contentWindow.postMessage(
+            { type: "template-params", params },
+            targetOrigin,
+          );
+        }
+      }
+
+      function handleFieldChange() {
+        syncPaperSizeSelect();
+        pushParamsToPreview();
+      }
+
+      function resetToDefaultParams() {
+        applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
+        syncPaperSizeSelect();
+        pushParamsToPreview();
+      }
+
+      elements.paperSize.addEventListener("change", () => {
+        syncPaperPreset();
+        handleFieldChange();
+      });
+
+      [
+        elements.paperWidth,
+        elements.paperHeight,
+        elements.patternWidth,
+        elements.patternHeight,
+        elements.aprilTagLength,
+        elements.textHeight,
+      ].forEach((input) => {
+        input.addEventListener("input", handleFieldChange);
+        input.addEventListener("change", handleFieldChange);
+      });
+
+      window.addEventListener("resize", pushParamsToPreview);
+      window.addEventListener("load", () => {
+        applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
+        syncPaperSizeSelect();
+        elements.previewFrame.src = buildTemplateUrl(DEFAULT_TEMPLATE_PARAMS);
+        pushParamsToPreview();
+      });
+
+      elements.previewFrame.addEventListener("load", pushParamsToPreview);
+      elements.resetBtn.addEventListener("click", resetToDefaultParams);
+
+      elements.okBtn.addEventListener("click", () => {
+        window.location.href = buildTemplateUrl(getCurrentParams());
       });
     </script>
   </body>

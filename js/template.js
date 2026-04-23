@@ -1,4 +1,4 @@
-const params = {
+const defaultParams = {
   PW: 210,
   PH: 297,
   PTW: 170,
@@ -6,6 +6,25 @@ const params = {
   al: 24,
   TH: 28,
 };
+
+function parseParamsFromLocation() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const params = { ...defaultParams };
+
+  Object.keys(defaultParams).forEach((key) => {
+    const rawValue = searchParams.get(key);
+
+    if (rawValue === null) return;
+
+    const value = Number.parseFloat(rawValue);
+
+    if (Number.isFinite(value) && value > 0) {
+      params[key] = value;
+    }
+  });
+
+  return params;
+}
 
 function setRootVariables({ PW, PH, PTW, PTH, al, TH }) {
   const root = document.documentElement;
@@ -34,5 +53,22 @@ function renderQRCode({ PTW, PTH, al }) {
   });
 }
 
-setRootVariables(params);
-renderQRCode(params);
+function applyTemplateParams(nextParams) {
+  setRootVariables(nextParams);
+  renderQRCode(nextParams);
+}
+
+window.addEventListener("message", (event) => {
+  if (event.source !== window.parent) return;
+  if (window.location.protocol !== "file:" && event.origin !== window.location.origin) {
+    return;
+  }
+  if (event.data?.type !== "template-params") return;
+
+  applyTemplateParams({
+    ...defaultParams,
+    ...event.data.params,
+  });
+});
+
+applyTemplateParams(parseParamsFromLocation());
