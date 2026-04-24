@@ -84,7 +84,7 @@ function syncMarginsDisplay({PW, PH, PTW, PTH, al, TH}) {
 function syncPaperSizeSelect() {
     const {PW, PH} = getCurrentParams();
     const activePreset = Object.entries(PRESET_SIZES).find(
-        ([, preset]) => preset.PW === PW && preset.PH === PH,
+        ([, preset]) => (preset.PW === PW || preset.PH === PW) && (preset.PW * preset.PH === PW * PH),
     );
 
     elements.paperSize.value = activePreset ? activePreset[0] : "Custom";
@@ -212,8 +212,10 @@ function applySelectedOrientation() {
 
     const isWider = params.PW > params.PH;
     const isLandscape = orientation === "Landscape";
-    if (isWider ^ isLandscape) {
+    if ((isWider &&  !isLandscape)||(!isWider && isLandscape)) {
         [params.PW, params.PH] = [params.PH, params.PW];
+        applyParamsToInputs(params);
+        pushParamsToPreview();
     }
 }
 
