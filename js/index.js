@@ -226,8 +226,9 @@ elements.resetBtn.addEventListener("click", resetToDefaultParams);
 elements.okBtn.addEventListener("click", () => {
   const targetOrigin =
     window.location.protocol === "file:" ? "*" : window.location.origin;
-  elements.previewFrame.contentWindow.postMessage(
-    { type: "save-pdf" },
-    targetOrigin,
-  );
+  const newWindow = window.open(buildTemplateUrl(getCurrentParams()));
+
+  newWindow.addEventListener("load", () => {
+    newWindow.postMessage({ type: "save-pdf" }, targetOrigin);
+  });
 });
