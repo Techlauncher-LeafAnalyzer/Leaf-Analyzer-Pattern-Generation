@@ -46,6 +46,18 @@ function setRootVariables({ PW, PH, PTW, PTH, al, TH }) {
   root.style.setProperty("--th", `${TH}mm`);
 }
 
+function getRootVariables() {
+  const root = document.documentElement;
+  return {
+    PW: Number(root.style.getPropertyValue("--pw").replace("mm", "")),
+    PH: Number(root.style.getPropertyValue("--ph").replace("mm", "")),
+    PTW: Number(root.style.getPropertyValue("--ptw").replace("mm", "")),
+    PTH: Number(root.style.getPropertyValue("--pth").replace("mm", "")),
+    al: Number(root.style.getPropertyValue("--al").replace("mm", "")),
+    TH: Number(root.style.getPropertyValue("--th").replace("mm", "")),
+  }
+}
+
 /**
  * Build the text content encoded in the QR code.
  * Format example: "170*220-24 mm"
@@ -82,10 +94,58 @@ function applyTemplateParams(nextParams) {
 }
 
 /**
- * Wraps window.print().
+ * Rasterizes one SVG to a same-sized <canvas> via an off-thread Image decode.
+ * Returns the canvas and keeps the original SVG for later restoration.
  */
-function saveAsPDF(){
-  window.print();
+function svgToCanvas(svg) {
+  return new Promise((resolve) => {
+    const { width, height } = svg.getBoundingClientRect();
+    const canvas = document.createElement("canvas");
+    canvas.width = width * 2;
+    canvas.height = height * 2;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+
+    const blob = new Blob([new XMLSerializer().serializeToString(svg)], {
+      type: "image/svg+xml",
+    });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas);
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+/**
+ * Generates and automatically saves the current preview template as a pdf.
+ * SVGs are swapped for canvases in-place on the live element so html2canvas
+ * captures them at their correct on-screen coordinates, then restored after.
+ */
+async function saveAsPDF({ PW, PH }) {
+  const element = document.getElementById("page");
+
+  // Pre-rasterize all SVGs before html2canvas runs
+  const svgs = Array.from(element.querySelectorAll("svg"));
+  const canvases = await Promise.all(svgs.map(svgToCanvas));
+  svgs.forEach((svg, i) => { if (canvases[i]) svg.replaceWith(canvases[i]); });
+
+  const opts = {
+    filename: `${PW}-${PH}-leaf-analyzer-pattern.pdf`,
+    image: { type: "jpeg", quality: 1.0 },
+    html2canvas: { scale: 2, logging: true },
+    jsPDF: { unit: "mm", orientation: PH > PW ? "portrait" : "landscape", format: [PW, PH] },
+  };
+
+  await html2pdf().set(opts).from(element).save();
+
+  // Restore original SVGs
+  canvases.forEach((canvas, i) => { if (canvas) canvas.replaceWith(svgs[i]); });
 }
 
 /**
@@ -93,7 +153,8 @@ function saveAsPDF(){
  * Used to update template dynamically.
  */
 window.addEventListener("message", (event) => {
-  if (event.source !== window.parent) return;
+  const expectedSource = window.parent !== window ? window.parent : window.opener;
+  if (event.source !== expectedSource) return;
   if (window.location.protocol !== "file:" && event.origin !== window.location.origin) {
     return;
   }
@@ -101,7 +162,7 @@ window.addEventListener("message", (event) => {
   if (event.data?.type === "template-params") {
     applyTemplateParams({ ...defaultParams, ...event.data.params });
   } else if (event.data?.type === "save-pdf") {
-    saveAsPDF();
+    saveAsPDF(getRootVariables());
   }
 });
 
