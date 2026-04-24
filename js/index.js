@@ -240,6 +240,16 @@ function resetToDefaultParams() {
     syncFieldChanges();
 }
 
+/**
+ * Checks if the pattern falls off the sides of the page.
+ * It's recommended to throw a warning notification before allowing printing in this case.
+ */
+function badPatternState(){
+    const params = getCurrentParams();
+    if (params.PH < params.PTH + params.TH + params.al) return true;
+    return params.PW < params.PTW + params.al;
+
+}
 //#endregion
 /* ===========================
    Event Listeners
@@ -284,6 +294,9 @@ elements.previewFrame.addEventListener("load", pushParamsToPreview);
 // Buttons
 elements.resetBtn.addEventListener("click", resetToDefaultParams);
 elements.okBtn.addEventListener("click", () => {
+    if (badPatternState() && !confirm("Page dimensions are smaller than pattern size. Are you sure?")) {
+        return;
+    }
     const targetOrigin =
         window.location.protocol === "file:" ? "*" : window.location.origin;
     const newWindow = window.open(buildTemplateUrl(getCurrentParams()));
