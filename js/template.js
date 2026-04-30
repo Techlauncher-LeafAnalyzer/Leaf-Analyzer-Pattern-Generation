@@ -60,10 +60,10 @@ function getRootVariables() {
 
 /**
  * Build the text content encoded in the QR code.
- * Format example: "170*220-24 mm"
+ * Format example: "170,220,24 mm"
  */
 function buildQRText({ PTW, PTH, al }) {
-  return `${PTW}*${PTH}-${al} mm`;
+  return `${PTW},${PTH},${al} mm`;
 }
 
 /**

@@ -179,14 +179,14 @@ body {
   top: 0;
   left: calc(var(--al) + (var(--ptw) - 2 * var(--al)) * 0.05);
   width: calc((var(--ptw) - 2 * var(--al)) * 0.9);
-  border-top: 1px dashed #666;
+  border-top: 1px dashed rgb(52, 52, 52);
 }
 
 .bottom-line {
   bottom: 0;
   left: calc(var(--al) + (var(--ptw) - 2 * var(--al)) * 0.05);
   width: calc((var(--ptw) - 2 * var(--al)) * 0.9);
-  border-top: 1px dashed #666;
+  border-top: 1px dashed rgb(52, 52, 52);
 }
 
 /* vertical tag space = pattern height - 2 * tag size */
@@ -195,14 +195,14 @@ body {
   left: 0;
   top: calc(var(--al) + (var(--pth) - 2 * var(--al)) * 0.05);
   height: calc((var(--pth) - 2 * var(--al)) * 0.9);
-  border-left: 1px dashed #666;
+  border-left: 1px dashed rgb(52, 52, 52);
 }
 
 .right-line {
   right: 0;
   top: calc(var(--al) + (var(--pth) - 2 * var(--al)) * 0.05);
   height: calc((var(--pth) - 2 * var(--al)) * 0.9);
-  border-left: 1px dashed #666;
+  border-left: 1px dashed rgb(52, 52, 52);
 }
 
 .info {

@@ -45,7 +45,7 @@
         const tagWidth = tagWidthInput.value || "";
         const unit = unitInput.value.trim() || "mm";
 
-        return `${length}*${width}-${tagWidth} ${unit}`;
+        return `${length},${width},${tagWidth} ${unit}`;
       }
 
       function updateQRCode() {
