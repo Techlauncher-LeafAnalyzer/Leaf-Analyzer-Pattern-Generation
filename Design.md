@@ -5,7 +5,7 @@
    * Pattern width (`PTW`): width of the pattern area
    * Pattern height (`PTH`): height of the pattern area
    * AprilTag length (`al`): side length of a single AprilTag
-   * Text height (`TH`): height of the top text area
+   * Text area height (`TH`): height of the top text area
 
 2. A corresponding webpage needs to be generated:
 
