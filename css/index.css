@@ -226,8 +226,7 @@ body {
   border: none;
   display: block;
   background: #fff;
-  transform-origin: top left;
-  transform: scale(var(--preview-scale));
+  zoom: var(--preview-scale);
 }
 
 .sheet-meta {
