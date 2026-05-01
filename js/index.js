@@ -214,6 +214,8 @@ function applySelectedOrientation() {
     const isLandscape = orientation === "Landscape";
     if ((isWider &&  !isLandscape)||(!isWider && isLandscape)) {
         [params.PW, params.PH] = [params.PH, params.PW];
+        // LEAF-57 Automatically swap pattern width and height when changing orientation
+        [params.PTW, params.PTH] = [params.PTH, params.PTW];
         applyParamsToInputs(params);
         pushParamsToPreview();
     }
