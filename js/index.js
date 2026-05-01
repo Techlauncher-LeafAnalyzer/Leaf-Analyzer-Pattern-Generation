@@ -305,3 +305,92 @@ elements.okBtn.addEventListener("click", () => {
         newWindow.postMessage({type: "save-pdf"}, targetOrigin);
     });
 });
+
+/** validation start**/
+/** validation rule:
+ * 1. Pattern length, Pattern width, AprilTag length and Text area height must be greater than 0.
+ * 2. Pattern length, Pattern width must be greater than or equal to 2 × AprilTag length.
+ * Validation is triggered when the input field loses focus.
+ * **/
+const inputNames={
+    paperWidthNm: document.getElementById("paperWidthNm"),
+    paperHeightNm: document.getElementById("paperHeightNm"),
+    patternWidthNm: document.getElementById("patternWidthNm"),
+    patternHeightNm: document.getElementById("patternHeightNm"),
+    aprilTagLengthNm: document.getElementById("aprilTagLengthNm"),
+    textHeightNm: document.getElementById("textHeightNm"),
+}
+
+const errorMsgs = {
+    paperWidthErr: document.getElementById("paperWidthErr"),
+    paperHeightErr: document.getElementById("paperHeightErr"),
+    patternWidthErr: document.getElementById("patternWidthErr"),
+    patternHeightErr: document.getElementById("patternHeightErr"),
+    aprilTagLengthErr: document.getElementById("aprilTagLengthErr"),
+    textHeightErr: document.getElementById("textHeightErr"),
+};
+
+const aprilTagValue = Number(elements.aprilTagLength.value);
+
+// Rule 1 & Rule 2
+function validateInputSize(input, errorMsg, inputNm) {
+  input.addEventListener("blur", () => {
+    const inputValue = Number(input.value);
+
+    // Validate after the user leaves the input field.
+    if (!(input.value !== "" && inputValue > 0)) {
+      // rule 1. >0 and not null
+      errorMsg.textContent = inputNm.textContent.trim() + " should be greater than 0!";
+      errorMsg.style.visibility = "visible";
+      return;
+    }
+    if (!(inputValue >= 2 * aprilTagValue)) {
+      // rule 2. > 2* AprilTag
+      errorMsg.textContent = inputNm.textContent.trim() + " should be greater than 2 × AprilTag length!";
+      errorMsg.style.visibility = "visible";
+      return;
+    }
+  });
+
+  // While typing, hide the error as soon as the value becomes valid.
+  input.addEventListener("input", () => {
+    const inputValue = Number(input.value);
+    if (((input.value !== "" && inputValue > 0) && (inputValue >= 2 * aprilTagValue))) {
+      errorMsg.style.visibility = "hidden";
+    }
+  });
+}
+
+// Rule 1
+function validateInputSizeRule1(input, errorMsg, inputNm) {
+  input.addEventListener("blur", () => {
+    const inputValue = Number(input.value);
+
+    // Validate after the user leaves the input field.
+    if (!(input.value !== "" && inputValue > 0)) {
+      // rule 1. >0 and not null
+      errorMsg.textContent = inputNm.textContent.trim() + " should be greater than 0!";
+      errorMsg.style.visibility = "visible";
+      return;
+    }
+  });
+
+  // While typing, hide the error as soon as the value becomes valid.
+  input.addEventListener("input", () => {
+    const inputValue = Number(input.value);
+    if ((input.value !== "" && inputValue > 0)) {
+      errorMsg.style.visibility = "hidden";
+    }
+  });
+}
+
+// Register validation once.
+validateInputSize(elements.paperWidth, errorMsgs.paperWidthErr, inputNames.paperWidthNm);
+validateInputSize(elements.paperHeight, errorMsgs.paperHeightErr, inputNames.paperHeightNm);
+validateInputSize(elements.patternWidth, errorMsgs.patternWidthErr, inputNames.patternWidthNm);
+validateInputSize(elements.patternHeight, errorMsgs.patternHeightErr, inputNames.patternHeightNm);
+
+validateInputSizeRule1(elements.aprilTagLength, errorMsgs.aprilTagLengthErr, inputNames.aprilTagLengthNm);
+validateInputSizeRule1(elements.textHeight, errorMsgs.textHeightErr, inputNames.textHeightNm);
+
+/** validation end**/

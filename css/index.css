@@ -323,3 +323,12 @@ body {
 .btn.ok .icon {
   color: var(--green);
 }
+
+.error-msg {
+  color: #d93025;
+  font-size: 12px;
+  margin-top: -12px; /* Keep the error message close to its related input field. */
+  max-height: 12px;
+  visibility: hidden;
+  grid-column: 1 / -1;
+}
