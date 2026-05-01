@@ -123,9 +123,15 @@ function svgToCanvas(svg) {
 }
 
 /**
- * Generates and automatically saves the current preview template as a pdf.
- * SVGs are swapped for canvases in-place on the live element so html2canvas
- * captures them at their correct on-screen coordinates, then restored after.
+ * Generate and save the current preview template as a PDF.
+ *
+ * Rasterizes inline SVGs in-place so html2canvas captures their on-screen appearance,
+ * renders the #page element to a single canvas, embeds that canvas as a full-page
+ * JPEG into a jsPDF document sized PW×PH millimeters, saves the PDF, and restores
+ * the original SVG elements.
+ *
+ * @param {number} PW - Page width in millimeters.
+ * @param {number} PH - Page height in millimeters.
  */
 async function saveAsPDF({ PW, PH }) {
   const element = document.getElementById("page");
