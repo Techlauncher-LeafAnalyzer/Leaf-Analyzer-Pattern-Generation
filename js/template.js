@@ -123,9 +123,15 @@ function svgToCanvas(svg) {
 }
 
 /**
- * Generates and automatically saves the current preview template as a pdf.
- * SVGs are swapped for canvases in-place on the live element so html2canvas
- * captures them at their correct on-screen coordinates, then restored after.
+ * Generate and save the current preview template as a PDF.
+ *
+ * Rasterizes inline SVGs in-place so html2canvas captures their on-screen appearance,
+ * renders the #page element to a single canvas, embeds that canvas as a full-page
+ * JPEG into a jsPDF document sized PW×PH millimeters, saves the PDF, and restores
+ * the original SVG elements.
+ *
+ * @param {number} PW - Page width in millimeters.
+ * @param {number} PH - Page height in millimeters.
  */
 async function saveAsPDF({ PW, PH }) {
   const element = document.getElementById("page");
@@ -135,14 +141,18 @@ async function saveAsPDF({ PW, PH }) {
   const canvases = await Promise.all(svgs.map(svgToCanvas));
   svgs.forEach((svg, i) => { if (canvases[i]) svg.replaceWith(canvases[i]); });
 
-  const opts = {
-    filename: `${PW}-${PH}-leaf-analyzer-pattern.pdf`,
-    image: { type: "jpeg", quality: 1.0 },
-    html2canvas: { scale: 2, logging: true },
-    jsPDF: { unit: "mm", orientation: PH > PW ? "portrait" : "landscape", format: [PW, PH] },
-  };
-
-  await html2pdf().set(opts).from(element).save();
+  // Capture element, then place it as a single image on one jsPDF page.
+  // This bypasses html2pdf's page-splitting logic, which was producing a
+  // blank extra page due to floating-point rounding in the mm→px conversion.
+  const canvas = await html2canvas(element, { scale: 2, logging: false });
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    unit: "mm",
+    orientation: PH >= PW ? "portrait" : "landscape",
+    format: [PW, PH],
+  });
+  pdf.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0, PW, PH);
+  pdf.save(`${PW}-${PH}-leaf-analyzer-pattern.pdf`);
 
   // Restore original SVGs
   canvases.forEach((canvas, i) => { if (canvas) canvas.replaceWith(svgs[i]); });
