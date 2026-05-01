@@ -6,6 +6,7 @@
     <title>Home Page</title>
     <link rel="stylesheet" href="./css/lggc.min.css" />
     <link rel="stylesheet" href="./css/index.css" />
+    
   </head>
   <body>
     <div class="window lggc">
@@ -31,14 +32,17 @@
                 </span>
                 <span></span>
               </label>
+              <span class="error-msg"></span>
               <!-- Paper Width -->
               <label class="field">
-                <span class="label">Paper width</span>
+                <span class="label" id="paperWidthNm">Paper width</span>
                 <input class="lggc" id="paperWidth" type="number" value="210" />
               </label>
+              <span class="error-msg" id="paperWidthErr"></span>
+
               <!-- Paper Height -->
               <label class="field">
-                <span class="label">Paper height</span>
+                <span class="label" id="paperHeightNm">Paper height</span>
                 <input
                   class="lggc"
                   id="paperHeight"
@@ -46,6 +50,8 @@
                   value="297"
                 />
               </label>
+              <span class="error-msg" id="paperHeightErr"></span>
+
               <!-- Paper Orientation -->
               <label class="field">
                 <span class="label">Orientation</span>
@@ -62,7 +68,7 @@
           <div class="group lggc" style="--lggc-blur: 10px">
             <div class="fields">
               <label class="field two-col">
-                <span class="label">Pattern width</span>
+                <span class="label" id="patternWidthNm">Pattern width</span>
                 <input
                   id="patternWidth"
                   class="lggc"
@@ -71,8 +77,9 @@
                   value="170"
                 />
               </label>
+              <span class="error-msg" id="patternWidthErr"></span>
               <label class="field two-col">
-                <span class="label">Pattern height</span>
+                <span class="label" id="patternHeightNm">Pattern height</span>
                 <input
                   id="patternHeight"
                   class="lggc"
@@ -81,8 +88,9 @@
                   value="220"
                 />
               </label>
+              <span class="error-msg" id="patternHeightErr"></span>
               <label class="field two-col">
-                <span class="label">AprilTag length</span>
+                <span class="label" id="aprilTagLengthNm">AprilTag length</span>
                 <input
                   id="aprilTagLength"
                   class="lggc"
@@ -91,8 +99,9 @@
                   value="24"
                 />
               </label>
+              <span class="error-msg" id="aprilTagLengthErr"></span>
               <label class="field two-col">
-                <span class="label">Text area height</span>
+                <span class="label" id="textHeightNm">Text area height</span>
                 <input
                   id="textHeight"
                   class="lggc"
@@ -101,6 +110,7 @@
                   value="28"
                 />
               </label>
+              <span class="error-msg" id="textHeightErr"></span>
             </div>
           </div>
           <!-- Margins -->
