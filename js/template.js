@@ -141,17 +141,16 @@ async function saveAsPDF({ PW, PH }) {
   const canvases = await Promise.all(svgs.map(svgToCanvas));
   svgs.forEach((svg, i) => { if (canvases[i]) svg.replaceWith(canvases[i]); });
 
-  // Capture element, then place it as a single image on one jsPDF page.
-  // This bypasses html2pdf's page-splitting logic, which was producing a
-  // blank extra page due to floating-point rounding in the mm→px conversion.
-  const canvas = await html2canvas(element, { scale: 2, logging: false });
+  let phRounded = Math.round(PH * 3.7795275591); // mm to px conversion based on 96 DPI
+  let pwRounded = Math.round(PW * 3.7795275591); // mm to px conversion based on 96 DPI
+  const canvas = await html2canvas(element, { width: pwRounded, height: phRounded, logging: true });
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({
     unit: "mm",
     orientation: PH >= PW ? "portrait" : "landscape",
     format: [PW, PH],
   });
-  pdf.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0, PW, PH);
+  pdf.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0, PW, PH, "", "NONE");
   pdf.save(`${PW}-${PH}-leaf-analyzer-pattern.pdf`);
 
   // Restore original SVGs
