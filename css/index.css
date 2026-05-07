@@ -27,7 +27,7 @@ body {
   font-family: "Microsoft YaHei", sans-serif;
   background: linear-gradient(135deg, #ffd167 0%, #fffafa 50%, #c9d982 100%);
   color: var(--text);
-  padding: 24px;
+  padding: 16px;
 }
 
 /* Window */
@@ -72,13 +72,13 @@ body {
   display: grid;
   grid-template-columns: 366px 1fr;
   gap: 22px;
-  padding: 16px;
+  padding: 12px;
 }
 
 .left {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 12px;
 }
 
 /* Panels */
@@ -331,4 +331,8 @@ body {
   max-height: 12px;
   visibility: hidden;
   grid-column: 1 / -1;
+}
+
+.fields:has(> .error-msg:last-child) {
+  margin-bottom: -12px;
 }
