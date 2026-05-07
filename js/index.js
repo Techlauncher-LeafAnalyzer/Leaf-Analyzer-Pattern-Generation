@@ -27,8 +27,13 @@ const DEFAULT_TEMPLATE_PARAMS = {
 
 // Preset paper sizes
 const PRESET_SIZES = {
-    A4: {PW: 210, PH: 297},
-    A3: {PW: 297, PH: 420},
+    A0: { PW: 841, PH: 1189 },
+    A1: { PW: 594, PH: 841 },
+    A2: { PW: 420, PH: 594 },
+    A3: { PW: 297, PH: 420 },
+    A4: { PW: 210, PH: 297 },
+    B4: { PW: 250, PH: 353 },
+    B5: { PW: 176, PH: 250 },
 };
 
 // Cache all DOM elements for easy access
@@ -195,12 +200,16 @@ function buildTemplateUrl(params) {
  * Apply width/height when preset (A4/A3) is selected.
  */
 function applyPaperSizeSelection() {
-    const {paperSize, paperWidth, paperHeight} = elements;
+    const {paperSize, paperWidth, paperHeight, patternWidth, patternHeight} = elements;
     const preset = PRESET_SIZES[paperSize.value];
 
     if (!preset) return;
+    const al = getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al);
+    const TH = getNumericValue(elements.textHeight, DEFAULT_TEMPLATE_PARAMS.TH);
     paperWidth.value = preset.PW;
     paperHeight.value = preset.PH;
+    patternWidth.value = preset.PW - 40;
+    patternHeight.value = preset.PH - al - TH - 25;
 }
 
 /**
@@ -214,8 +223,8 @@ function applySelectedOrientation() {
     const isLandscape = orientation === "Landscape";
     if ((isWider &&  !isLandscape)||(!isWider && isLandscape)) {
         [params.PW, params.PH] = [params.PH, params.PW];
-        // LEAF-57 Automatically swap pattern width and height when changing orientation
-        [params.PTW, params.PTH] = [params.PTH, params.PTW];
+        params.PTW = params.PW - 40;
+        params.PTH = params.PH - params.al - params.TH - 25;
         applyParamsToInputs(params);
         pushParamsToPreview();
     }
@@ -239,6 +248,7 @@ function formatMm(value) {
  */
 function resetToDefaultParams() {
     applyParamsToInputs(DEFAULT_TEMPLATE_PARAMS);
+    Object.values(errorMsgs).forEach(el => { el.style.visibility = "hidden"; });
     syncFieldChanges();
 }
 
