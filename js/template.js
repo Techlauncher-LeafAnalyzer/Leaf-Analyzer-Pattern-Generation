@@ -159,7 +159,24 @@ async function saveAsPDF({ PW, PH }) {
     format: [PW, PH],
   });
   pdf.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0, PW, PH, "", "NONE");
-  pdf.save(`${PW}-${PH}-leaf-analyzer-pattern.pdf`);
+
+  await new Promise((resolve, reject) => {
+    try {
+      const url = URL.createObjectURL(pdf.output("blob"));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${PW}-${PH}-leaf-analyzer-pattern.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        resolve();
+      }, 1000);
+    } catch (err) {
+      reject(err);
+    }
+  });
 
   // Restore original SVGs
   canvases.forEach((canvas, i) => { if (canvas) canvas.replaceWith(svgs[i]); });
@@ -183,7 +200,14 @@ window.addEventListener("message", (event) => {
       document.documentElement.style.setProperty("--line-width", `${lineWidth}px`);
     }
   } else if (event.data?.type === "save-pdf") {
-    saveAsPDF(getRootVariables());
+    saveAsPDF(getRootVariables())
+      .then(() => window.close())
+      .catch((err) => {
+        const overlay = document.createElement("div");
+        overlay.textContent = `Failed to generate PDF within timeout period: ${err?.message ?? "unknown error"}`;
+        overlay.style.cssText = "position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.92);font-size:1.2rem;color:#900;padding:2rem;text-align:center;z-index:9999";
+        document.body.appendChild(overlay);
+      });
   }
 });
 
