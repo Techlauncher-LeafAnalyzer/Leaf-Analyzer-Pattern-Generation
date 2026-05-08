@@ -19,9 +19,9 @@ const MM_TO_PX = 96 / 25.4;
 const DEFAULT_TEMPLATE_PARAMS = {
     PW: 210,
     PH: 297,
-    PTW: 170,
-    PTH: 220,
-    al: 24,
+    PTW: 200,
+    PTH: 244,
+    al: 15,
     TH: 28,
 };
 
@@ -34,6 +34,16 @@ const PRESET_SIZES = {
     A4: { PW: 210, PH: 297 },
     B4: { PW: 250, PH: 353 },
     B5: { PW: 176, PH: 250 },
+};
+
+const PRESET_DEFAULTS = {
+    A0: { al: 35, margin: 25 },
+    A1: { al: 30, margin: 20 },
+    A2: { al: 25, margin: 15 },
+    A3: { al: 20, margin: 10 },
+    A4: { al: 15, margin: 5 },
+    B4: { al: 20, margin: 10 },
+    B5: { al: 15, margin: 5 },
 };
 
 // Cache all DOM elements for easy access
@@ -187,6 +197,35 @@ function applyParamsToInputs(params) {
     elements.textHeight.value = params.TH;
 }
 
+function getPaperDefaults(paperSize) {
+    return PRESET_DEFAULTS[paperSize] || {
+        al: getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al),
+        margin: (getNumericValue(elements.paperWidth, DEFAULT_TEMPLATE_PARAMS.PW) -
+            getNumericValue(elements.patternWidth, DEFAULT_TEMPLATE_PARAMS.PTW)) / 2,
+    };
+}
+
+function buildParamsForPaperSize(paperSize, orientation = elements.orientation.value) {
+    const preset = PRESET_SIZES[paperSize];
+    if (!preset) return null;
+
+    const defaults = getPaperDefaults(paperSize);
+    const isLandscape = orientation === "Landscape";
+    const PW = isLandscape ? preset.PH : preset.PW;
+    const PH = isLandscape ? preset.PW : preset.PH;
+    const TH = getNumericValue(elements.textHeight, DEFAULT_TEMPLATE_PARAMS.TH);
+
+    return {
+        ...getCurrentParams(),
+        PW,
+        PH,
+        PTW: PW - (2 * defaults.margin),
+        PTH: PH - defaults.al - TH - (2 * defaults.margin),
+        al: defaults.al,
+        TH,
+    };
+}
+
 /**
  * Build preview page URL with query parameters.
  */
@@ -198,19 +237,12 @@ function buildTemplateUrl(params) {
 }
 
 /**
- * Apply width/height when preset (A4/A3) is selected.
+ * Apply the selected paper size defaults.
  */
 function applyPaperSizeSelection() {
-    const {paperSize, paperWidth, paperHeight, patternWidth, patternHeight} = elements;
-    const preset = PRESET_SIZES[paperSize.value];
-
-    if (!preset) return;
-    const al = getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al);
-    const TH = getNumericValue(elements.textHeight, DEFAULT_TEMPLATE_PARAMS.TH);
-    paperWidth.value = preset.PW;
-    paperHeight.value = preset.PH;
-    patternWidth.value = preset.PW - 40;
-    patternHeight.value = preset.PH - al - TH - 25;
+    const params = buildParamsForPaperSize(elements.paperSize.value);
+    if (!params) return;
+    applyParamsToInputs(params);
 }
 
 /**
@@ -219,13 +251,18 @@ function applyPaperSizeSelection() {
 function applySelectedOrientation() {
     let params = getCurrentParams();
     const orientation = elements.orientation.value;
+    const presetParams = buildParamsForPaperSize(elements.paperSize.value, orientation);
+
+    if (presetParams) {
+        applyParamsToInputs(presetParams);
+        pushParamsToPreview();
+        return;
+    }
 
     const isWider = params.PW > params.PH;
     const isLandscape = orientation === "Landscape";
     if ((isWider &&  !isLandscape)||(!isWider && isLandscape)) {
         [params.PW, params.PH] = [params.PH, params.PW];
-        params.PTW = params.PW - 40;
-        params.PTH = params.PH - params.al - params.TH - 25;
         applyParamsToInputs(params);
         pushParamsToPreview();
     }
@@ -343,12 +380,11 @@ const errorMsgs = {
     textHeightErr: document.getElementById("textHeightErr"),
 };
 
-const aprilTagValue = Number(elements.aprilTagLength.value);
-
 // Rule 1 & Rule 2
 function validateInputSize(input, errorMsg, inputNm) {
   input.addEventListener("blur", () => {
     const inputValue = Number(input.value);
+    const aprilTagValue = getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al);
 
     // Validate after the user leaves the input field.
     if (!(input.value !== "" && inputValue > 0)) {
@@ -368,6 +404,7 @@ function validateInputSize(input, errorMsg, inputNm) {
   // While typing, hide the error as soon as the value becomes valid.
   input.addEventListener("input", () => {
     const inputValue = Number(input.value);
+    const aprilTagValue = getNumericValue(elements.aprilTagLength, DEFAULT_TEMPLATE_PARAMS.al);
     if (((input.value !== "" && inputValue > 0) && (inputValue >= 2 * aprilTagValue))) {
       errorMsg.style.visibility = "hidden";
     }

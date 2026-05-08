@@ -2,9 +2,9 @@
 const defaultParams = {
   PW: 210,   // Paper Width
   PH: 297,   // Paper Height
-  PTW: 170,  // Pattern Width
-  PTH: 220,  // Pattern Height
-  al: 24,    // AprilTag Length
+  PTW: 200,  // Pattern Width
+  PTH: 244,  // Pattern Height
+  al: 15,    // AprilTag Length
   TH: 28,    // Text Height
 };
 
