@@ -143,7 +143,15 @@ async function saveAsPDF({ PW, PH }) {
 
   let phRounded = Math.round(PH * 3.7795275591); // mm to px conversion based on 96 DPI
   let pwRounded = Math.round(PW * 3.7795275591); // mm to px conversion based on 96 DPI
-  const canvas = await html2canvas(element, { width: pwRounded, height: phRounded, logging: true });
+  const canvas = await html2canvas(element, {
+    width: pwRounded,
+    height: phRounded,
+    windowWidth: pwRounded,
+    windowHeight: phRounded,
+    scrollX: 0,
+    scrollY: 0,
+    logging: true,
+  });
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({
     unit: "mm",
