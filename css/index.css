@@ -214,8 +214,9 @@ body {
   position: relative;
   flex: 0 0 auto;
   /* Final preview width = real page width × current scale */
-  width: calc(var(--preview-page-width, 210mm) * var(--preview-scale));
-  height: calc(var(--preview-page-height, 297mm) * var(--preview-scale));
+  width: calc(var(--preview-page-width, 210mm) * var(--preview-scale, 0.62));
+  height: calc(var(--preview-page-height, 297mm) * var(--preview-scale, 0.62));
+  overflow: hidden;
 }
 
 .preview-iframe {
@@ -226,7 +227,8 @@ body {
   border: none;
   display: block;
   background: #fff;
-  zoom: var(--preview-scale);
+  transform-origin: top left;
+  transform: scale(var(--preview-scale, 0.62));
 }
 
 .sheet-meta {

@@ -178,6 +178,10 @@ window.addEventListener("message", (event) => {
 
   if (event.data?.type === "template-params") {
     applyTemplateParams({ ...defaultParams, ...event.data.params });
+    if (event.data.scale != null) {
+      const lineWidth = Math.max(1, Math.ceil(1 / event.data.scale));
+      document.documentElement.style.setProperty("--line-width", `${lineWidth}px`);
+    }
   } else if (event.data?.type === "save-pdf") {
     saveAsPDF(getRootVariables());
   }
