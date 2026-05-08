@@ -17,7 +17,7 @@ No installation or build step is required. Access the latest version on the [git
 
 | Field | Default | Description |
 |---|---|---|
-| Paper size | A4 | Preset shortcut. Sets width and height to A4 (210 × 297 mm) or A3 (297 × 420 mm). Selecting **Custom** allows free entry. Automatically updates when you type dimensions that match a preset. |
+| Paper size | A4 | Preset shortcut. Sets width, height, AprilTag length, and default margins for known A-series sizes. Selecting **Custom** allows free entry. Automatically updates when you type dimensions that match a preset. |
 | Paper width | 210 mm | Physical width of the sheet that will be printed on. |
 | Paper height | 297 mm | Physical height of the sheet. |
 | Orientation | Portrait | Swaps width and height when changed. Automatically updates to reflect whichever dimension is larger. |
@@ -26,9 +26,9 @@ No installation or build step is required. Access the latest version on the [git
 
 | Field | Default | Description |
 |---|---|---|
-| Pattern width | 170 mm | Width of the measurement area bounded by the four AprilTag markers. |
-| Pattern height | 220 mm | Height of the measurement area. |
-| AprilTag length | 24 mm | Side length of each AprilTag square placed at the four corners. Larger tags are easier for cameras to detect from a distance. Also controls the size of the QR code. |
+| Pattern width | 200 mm | Width of the measurement area bounded by the four AprilTag markers. |
+| Pattern height | 244 mm | Height of the measurement area. |
+| AprilTag length | 15 mm | Side length of each AprilTag square placed at the four corners. Larger tags are easier for cameras to detect from a distance. Also controls the size of the QR code. |
 | Text area height | 28 mm | Height of the header strip above the pattern area, which contains the title, logo, and QR code. |
 
 ### Margins (read-only)

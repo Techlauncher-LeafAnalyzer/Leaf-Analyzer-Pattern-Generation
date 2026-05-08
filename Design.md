@@ -12,7 +12,7 @@
    * Left margin = (PW - PTW) / 2
    * Right margin = (PW - PTW) / 2
    * Logo image width = height = al, centered horizontally, aligned to the top margin
-   * QR code image placed immediately to the right of the logo, aligned to the top margin, with width = height = 0.8 × al
+   * QR code image placed to the right of the logo with a gap of 0.2 × al, aligned to the top margin, with width = height = 0.8 × al
    * On the left side of the logo, there are two lines of text:
 
      * First line (main title): "Leaf Analyzer", line height = 0.3 × al, font color is #fbc43b
