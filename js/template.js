@@ -133,25 +133,31 @@ function svgToCanvas(svg) {
  * @param {number} PW - Page width in millimeters.
  * @param {number} PH - Page height in millimeters.
  */
-async function saveAsPDF({ PW, PH }) {
+/**
+ * Renders the page to a PDF blob. Temporarily replaces inline SVGs with
+ * rasterized canvases so html2canvas captures them correctly, then restores them.
+ */
+async function buildPDFBlob({ PW, PH }) {
   const element = document.getElementById("page");
 
-  // Pre-rasterize all SVGs before html2canvas runs
   const svgs = Array.from(element.querySelectorAll("svg"));
-  const canvases = await Promise.all(svgs.map(svgToCanvas));
-  svgs.forEach((svg, i) => { if (canvases[i]) svg.replaceWith(canvases[i]); });
+  const rasterized = await Promise.all(svgs.map(svgToCanvas));
+  svgs.forEach((svg, i) => { if (rasterized[i]) svg.replaceWith(rasterized[i]); });
 
-  let phRounded = Math.round(PH * 3.7795275591); // mm to px conversion based on 96 DPI
-  let pwRounded = Math.round(PW * 3.7795275591); // mm to px conversion based on 96 DPI
+  const pwPx = Math.round(PW * 3.7795275591);
+  const phPx = Math.round(PH * 3.7795275591);
   const canvas = await html2canvas(element, {
-    width: pwRounded,
-    height: phRounded,
-    windowWidth: pwRounded,
-    windowHeight: phRounded,
+    width: pwPx,
+    height: phPx,
+    windowWidth: pwPx,
+    windowHeight: phPx,
     scrollX: 0,
     scrollY: 0,
     logging: true,
   });
+
+  rasterized.forEach((c, i) => { if (c) c.replaceWith(svgs[i]); });
+
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({
     unit: "mm",
@@ -159,10 +165,30 @@ async function saveAsPDF({ PW, PH }) {
     format: [PW, PH],
   });
   pdf.addImage(canvas.toDataURL("image/jpeg", 1.0), "JPEG", 0, 0, PW, PH, "", "NONE");
+  return pdf.output("blob");
+}
 
+/**
+ * Saves via the File System Access API. Resolves only after the file is fully
+ * written — the writable.close() call is the deterministic signal.
+ */
+async function saveAsPDFToHandle(handle, params) {
+  const blob = await buildPDFBlob(params);
+  const writable = await handle.createWritable();
+  await writable.write(blob);
+  await writable.close();
+}
+
+/**
+ * Fallback for browsers without showSaveFilePicker (e.g. Firefox).
+ * Triggers a blob-URL download and waits 1 s for the browser to register it.
+ */
+async function saveAsPDF(params) {
+  const { PW, PH } = params;
+  const blob = await buildPDFBlob(params);
   await new Promise((resolve, reject) => {
     try {
-      const url = URL.createObjectURL(pdf.output("blob"));
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `${PW}-${PH}-leaf-analyzer-pattern.pdf`;
@@ -177,9 +203,6 @@ async function saveAsPDF({ PW, PH }) {
       reject(err);
     }
   });
-
-  // Restore original SVGs
-  canvases.forEach((canvas, i) => { if (canvas) canvas.replaceWith(svgs[i]); });
 }
 
 /**
@@ -200,11 +223,16 @@ window.addEventListener("message", (event) => {
       document.documentElement.style.setProperty("--line-width", `${lineWidth}px`);
     }
   } else if (event.data?.type === "save-pdf") {
-    saveAsPDF(getRootVariables())
+    const vars = getRootVariables();
+    const savePromise = event.data.handle
+      ? saveAsPDFToHandle(event.data.handle, vars)
+      : saveAsPDF(vars);
+
+    savePromise
       .then(() => window.close())
       .catch((err) => {
         const overlay = document.createElement("div");
-        overlay.textContent = `Failed to generate PDF within timeout period: ${err?.message ?? "unknown error"}`;
+        overlay.textContent = `Failed to generate PDF: ${err?.message ?? "unknown error"}`;
         overlay.style.cssText = "position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.92);font-size:1.2rem;color:#900;padding:2rem;text-align:center;z-index:9999";
         document.body.appendChild(overlay);
       });
