@@ -297,7 +297,7 @@ function resetToDefaultParams() {
 function badPatternState(){
     const params = getCurrentParams();
     if (params.PH < params.PTH + params.TH + params.al) return true;
-    return params.PW < params.PTW + params.al;
+    return params.PW < params.PTW;
 
 }
 //#endregion
