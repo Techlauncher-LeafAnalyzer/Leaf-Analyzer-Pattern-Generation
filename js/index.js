@@ -122,6 +122,7 @@ function updatePreviewScale() {
     paper.style.setProperty("--preview-page-width", `${PW}mm`);
     paper.style.setProperty("--preview-page-height", `${PH}mm`);
     paper.style.setProperty("--preview-scale", String(scale));
+    return scale;
 }
 
 /**
@@ -133,11 +134,11 @@ function pushParamsToPreview() {
         window.location.protocol === "file:" ? "*" : window.location.origin;
 
     syncMarginsDisplay(params);
-    updatePreviewScale();
+    const scale = updatePreviewScale();
 
     if (elements.previewFrame.contentWindow) {
         elements.previewFrame.contentWindow.postMessage(
-            {type: "template-params", params},
+            {type: "template-params", params, scale},
             targetOrigin,
         );
     }
