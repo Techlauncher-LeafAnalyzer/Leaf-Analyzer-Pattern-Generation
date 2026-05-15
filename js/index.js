@@ -14,13 +14,14 @@ For example:
 //#region global vars
 // Conversion constant: millimeters to pixels (based on 96 DPI)
 const MM_TO_PX = 96 / 25.4;
+const LOGO_SIZE_RATIO = 1.2;
 
 // Default template parameters (all units in mm)
 const DEFAULT_TEMPLATE_PARAMS = {
     PW: 210,
     PH: 297,
     PTW: 200,
-    PTH: 244,
+    PTH: 241,
     al: 15,
     TH: 28,
 };
@@ -83,8 +84,9 @@ function syncFieldChanges() {
  */
 function syncMarginsDisplay({PW, PH, PTW, PTH, al, TH}) {
     const horizontalMargin = (PW - PTW) / 2;
-    const topMargin = (PH - al - TH - PTH) / 2;
-    const bottomMargin = PH - topMargin - al - TH - PTH;
+    const headerHeight = LOGO_SIZE_RATIO * al;
+    const topMargin = (PH - headerHeight - TH - PTH) / 2;
+    const bottomMargin = PH - topMargin - headerHeight - TH - PTH;
 
     elements.marginsText.innerHTML =
         `Left: ${formatMm(horizontalMargin)} mm, ` +
@@ -220,7 +222,7 @@ function buildParamsForPaperSize(paperSize, orientation = elements.orientation.v
         PW,
         PH,
         PTW: PW - (2 * defaults.margin),
-        PTH: PH - defaults.al - TH - (2 * defaults.margin),
+        PTH: PH - (LOGO_SIZE_RATIO * defaults.al) - TH - (2 * defaults.margin),
         al: defaults.al,
         TH,
     };
@@ -296,7 +298,7 @@ function resetToDefaultParams() {
  */
 function badPatternState(){
     const params = getCurrentParams();
-    if (params.PH < params.PTH + params.TH + params.al) return true;
+    if (params.PH < params.PTH + params.TH + (LOGO_SIZE_RATIO * params.al)) return true;
     return params.PW < params.PTW;
 
 }
