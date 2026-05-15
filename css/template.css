@@ -5,6 +5,9 @@
   --pth: 220mm;
   --al: 24mm;
   --th: 28mm;
+  --logo-size: calc(1.2 * var(--al));
+  --qr-size: var(--al);
+  --header-height: var(--logo-size);
 }
 
 * {
@@ -43,8 +46,8 @@ body {
   /* Center the text area horizontally on the page */
   left: calc((var(--pw) - var(--ptw)) / 2);
   /* First find the top margin of the whole content block,
-     then move down by one tag height */
-  top: calc((var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al));
+     then move down by the header height */
+  top: calc((var(--ph) - var(--th) - var(--pth) - var(--header-height)) / 2 + var(--header-height));
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -52,8 +55,8 @@ body {
 
 .header-content {
   position: absolute;
-  /* Move the header upward by one tag height */
-  top: calc(-1 * var(--al));
+  /* Move the header upward by its visual height */
+  top: calc(-1 * var(--header-height));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -68,15 +71,15 @@ body {
   height: var(--pth);
   /* Center the pattern horizontally on the page */
   left: calc((var(--pw) - var(--ptw)) / 2);
-   /* Start from the top margin of the full block,
-     then add tag height and text height */
+  /* Start from the top margin of the full block,
+     then add header height and text height */
   top: calc(
-    (var(--ph) - var(--th) - var(--pth) - var(--al)) / 2 + var(--al) + var(--th)
+    (var(--ph) - var(--th) - var(--pth) - var(--header-height)) / 2 + var(--header-height) + var(--th)
   );
 }
 
 .title-block {
-  height: var(--al);
+  height: var(--logo-size);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -104,15 +107,15 @@ body {
 
 .logo {
   display: block;
-  width: var(--al);
-  height: var(--al);
-  flex: 0 0 var(--al);
+  width: var(--logo-size);
+  height: var(--logo-size);
+  flex: 0 0 var(--logo-size);
   object-fit: fill;
   border: 0;
 }
 
 .qr-block {
-  height: var(--al);
+  height: var(--header-height);
   margin-left: calc(0.2 * var(--al));
   display: flex;
   flex-direction: column;
@@ -123,9 +126,9 @@ body {
 
 .qr {
   display: block;
-  /* QR code size = 80% of tag size */
-  width: calc(0.8 * var(--al));
-  height: calc(0.8 * var(--al));
+  /* QR code size = 100% of tag size */
+  width: var(--qr-size);
+  height: var(--qr-size);
   border: 0;
 }
 

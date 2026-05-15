@@ -3,10 +3,13 @@ const defaultParams = {
   PW: 210,   // Paper Width
   PH: 297,   // Paper Height
   PTW: 200,  // Pattern Width
-  PTH: 244,  // Pattern Height
+  PTH: 241,  // Pattern Height
   al: 15,    // AprilTag Length
   TH: 28,    // Text Height
 };
+
+const MM_TO_PX = 96 / 25.4;
+const QR_SIZE_RATIO = 1;
 
 /**
  * Parse parameters from URL query string.
@@ -77,10 +80,14 @@ function renderQRCode({ PTW, PTH, al }) {
 
   qrTextEl.textContent = text;
 
+  const qrSizeMm = al * QR_SIZE_RATIO;
+
   QRCode.toCanvas(canvas, text, {
     margin: 1,
-    width: Math.round(al * 3.7795275591 * 0.8), // mm to px conversion based on 96 DPI
+    width: Math.round(qrSizeMm * MM_TO_PX),
   });
+  canvas.style.width = `${qrSizeMm}mm`;
+  canvas.style.height = `${qrSizeMm}mm`;
 }
 
 /**

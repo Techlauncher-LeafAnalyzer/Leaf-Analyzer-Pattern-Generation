@@ -27,8 +27,8 @@ No installation or build step is required. Access the latest version on the [git
 | Field | Default | Description |
 |---|---|---|
 | Pattern width | 200 mm | Width of the measurement area bounded by the four AprilTag markers. |
-| Pattern height | 244 mm | Height of the measurement area. |
-| AprilTag length | 15 mm | Side length of each AprilTag square placed at the four corners. Larger tags are easier for cameras to detect from a distance. Also controls the size of the QR code. |
+| Pattern height | 241 mm | Height of the measurement area. |
+| AprilTag length | 15 mm | Side length of each AprilTag square placed at the four corners. Larger tags are easier for cameras to detect from a distance. Also controls the size of the QR code and logo. |
 | Text area height | 28 mm | Height of the header strip above the pattern area, which contains the title, logo, and QR code. |
 
 ### Margins (read-only)
