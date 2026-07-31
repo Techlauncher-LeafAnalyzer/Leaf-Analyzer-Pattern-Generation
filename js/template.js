@@ -10,6 +10,7 @@ const defaultParams = {
 
 const MM_TO_PX = 96 / 25.4;
 const QR_SIZE_RATIO = 1;
+const PDF_RENDER_SCALE = 2;
 
 /**
  * Parse parameters from URL query string.
@@ -161,6 +162,7 @@ async function buildPDFBlob({ PW, PH }) {
     scrollX: 0,
     scrollY: 0,
     logging: true,
+    scale: PDF_RENDER_SCALE,
   });
 
   rasterized.forEach((c, i) => { if (c) c.replaceWith(svgs[i]); });
