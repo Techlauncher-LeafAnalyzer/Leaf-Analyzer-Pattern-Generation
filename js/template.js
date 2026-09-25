@@ -70,9 +70,9 @@ function buildQRText({ PTW, PTH, al }) {
   return `${PTW},${PTH},${al} mm`;
 }
 
-/** Build the label shown below the QR code (height × width - tag length). */
+/** Build the label shown below the QR code (width × height - tag length). */
 function buildQRLabel({ PTW, PTH, al }) {
-  return `${PTH}×${PTW}-${al} mm`;
+  return `${PTW}×${PTH}-${al} mm`;
 }
 
 /**
