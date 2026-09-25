@@ -39,7 +39,7 @@ Calculated automatically from the values above and displayed for reference. The 
 
 - **AprilTag markers** — one in each corner of the pattern area, used by the Leaf Analyzer to detect position and scale.
 - **Dashed boundary lines** — drawn between the tags along each edge to visually mark the measurement boundary.
-- **Header** — contains the *Leaf Analyzer* title and *APPN-Tech* subtitle, a logo, and a QR code. The QR code encodes the pattern dimensions in the format `PTW,PTH,al mm` (e.g. `170,220,24 mm`) so the analyzer can read the sheet's configuration automatically. The label below it shows width × height - AprilTag length (e.g. `220×170-24 mm`).
+- **Header** — contains the *Leaf Analyzer* title and *APPN-Tech* subtitle, a logo, and a QR code. The QR code encodes the pattern dimensions in the format `PTW,PTH,al mm` (e.g. `170,220,24 mm`) so the analyzer can read the sheet's configuration automatically. The label below it shows width × height - AprilTag length (e.g. `170×220-24 mm`).
 
 ## Project structure
 
