@@ -70,6 +70,11 @@ function buildQRText({ PTW, PTH, al }) {
   return `${PTW},${PTH},${al} mm`;
 }
 
+/** Build the label shown below the QR code (height × width - tag length). */
+function buildQRLabel({ PTW, PTH, al }) {
+  return `${PTH}×${PTW}-${al} mm`;
+}
+
 /**
  * Render QR code onto canvas.
  * Also updates the visible text label.
@@ -79,7 +84,7 @@ function renderQRCode({ PTW, PTH, al }) {
   const qrTextEl = document.getElementById("qrText");
   const text = buildQRText({ PTW, PTH, al });
 
-  qrTextEl.textContent = text;
+  qrTextEl.textContent = buildQRLabel({ PTW, PTH, al });
 
   const qrSizeMm = al * QR_SIZE_RATIO;
 
